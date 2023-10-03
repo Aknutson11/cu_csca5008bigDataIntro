@@ -19,10 +19,15 @@ public class SimpleAgedCacheTest {
     public void before() {
         nonempty.put("aKey", "aValue", 2000);
         nonempty.put("anotherKey", "anotherValue", 4000);
+        System.out.println("Assert True");
+        System.out.println(empty.isEmpty());
+        System.out.println("Assert False");
+        System.out.println(nonempty.isEmpty());
     }
 
     @Test
     public void isEmpty() {
+        
         assertTrue(empty.isEmpty());
         assertFalse(nonempty.isEmpty());
     }
