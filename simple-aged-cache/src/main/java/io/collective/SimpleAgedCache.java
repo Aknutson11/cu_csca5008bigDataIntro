@@ -1,6 +1,7 @@
 package io.collective;
 
 import java.time.Clock;
+import java.time.Instant;
 public class SimpleAgedCache {
     private Clock clock;
     private ExpirableEntry[] items;
@@ -9,11 +10,14 @@ public class SimpleAgedCache {
         private Object key;
         private Object value;
         private int retentionInMillis;
+        private long experation;
+
 
         public ExpirableEntry(Object key, Object value, int retentionInMillis) {
             this.key = key;
             this.value = value;
             this.retentionInMillis = retentionInMillis;
+            this.experation = Instant.now().toEpochMilli() + this.retentionInMillis; 
         }
     }
 
@@ -60,6 +64,10 @@ public class SimpleAgedCache {
 
     public int size() {
         // check ExpirableEntry to see if anything needs to be expired, then return length of array 
+        for(int i = 0; i < this.items.length; i++) {
+            System.out.println(i + ' ' + this.items[i].experation + ' ' + Instant.now().toEpochMilli());
+            // System.out.println(i + this.items[i].experation + Instant.now().toEpochMilli());
+        }
         this.clean();
         return this.items.length;
     }
@@ -72,17 +80,17 @@ public class SimpleAgedCache {
     }
 
     private void clean() {
-        if (this.clock != null) {
+        if (this.clock != null || 1 == 1) {
             int newSize = 0;
             for(int i = 0; i < this.items.length; i++) {
-                if (this.items[i].retentionInMillis < this.clock.millis()){
+                if (this.items[i].experation > Instant.now().toEpochMilli()){
                     newSize++;
                 }
             }
             ExpirableEntry[] newArray = new ExpirableEntry[newSize];
             int temp = 0;
             for(int i = 0; i < this.items.length; i++) {
-                if (this.items[i].retentionInMillis < this.clock.millis()){
+                if (this.items[i].experation > Instant.now().toEpochMilli()){
                     newArray[temp] = this.items[i];
                     temp++;
                     }
@@ -90,7 +98,7 @@ public class SimpleAgedCache {
             this.items = newArray;
             }
         }
-    //testing
+    // testing
     // public static void main(String args[]) {
     //     SimpleAgedCache empty = new SimpleAgedCache();
     //     SimpleAgedCache nonempty = new SimpleAgedCache();
@@ -100,8 +108,8 @@ public class SimpleAgedCache {
     //     System.out.println(empty.isEmpty());
     //     System.out.println("Assert False");
     //     System.out.println(nonempty.isEmpty());
-        // assertTrue(empty.isEmpty());
-        // assertFalse(nonempty.isEmpty());
+    //     assertTrue(empty.isEmpty());
+    //     assertFalse(nonempty.isEmpty());
     // }
     
 }
